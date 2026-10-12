@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="HAT Predict frontend prototype for hydrogen atom transfer predictions."><title>HAT Predict · Prototype</title><link rel="stylesheet" href="css/main.css"></head>
+<body>
+<header><a class="wordmark" href="#" aria-label="HAT Predict home">HAT<span>Predict</span><span class="mini-dot"></span></a><span class="badge">Interface prototype</span></header>
+<main>
+<section id="home" class="screen hero original-hero" aria-label="Choose your input method">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 650" id="original-intro" role="group" aria-labelledby="title desc">
+  <title id="title">HAT Predict — hydrogen hop opening animation</title>
+  <desc id="desc">A separate hydrogen atom bounces over the title, lands on the i, then floats up and splits into three colored input circles above the title. Reload to replay.</desc>
+  <!-- EDIT GUIDE: accent = #2563EB; ink = #25313C; background = #FFFFFF.
+       Open this file directly in a browser to play. Most design editors show only
+       the static artwork and do not preserve animation when exporting.
+       Timeline: entrance 0.5s; hops 0.95–2.65s; land 2.65s; expand 3.0–3.8s.
+       All geometry is in viewBox units. Change the text positions AND hop path
+       together if changing the title/font. Button link below is a placeholder.
+       This uses native SVG SMIL; no libraries, JavaScript, or external assets.
+       Production: respect reduced motion in the surrounding page and use a
+       real HTML link/button for the final control if embedding as an image. -->
+  <rect width="1000" height="650" fill="#FFFFFF"/>
+  <style>
+    .letter {font-family:Outfit,"Trebuchet MS",Arial,sans-serif;font-size:76px;font-weight:700;fill:#25313C}
+    .small {font-family:Arial,Helvetica,sans-serif;font-size:17px;fill:#64748B}
+    .footer-link {cursor:pointer;fill:#64748B;text-decoration:none}
+    .footer-link:hover,.footer-link:focus {fill:#3569D4;text-decoration:underline}
+    .choice {cursor:pointer}
+    .hover-shape {transition:transform 180ms ease}
+    .choice:hover .hover-shape {transform:translateY(-4px) scale(1.035)}
+    .choice:focus circle {stroke:#25313C;stroke-width:3}
+    @media (prefers-reduced-motion: reduce) {
+      #animated-scene {display:none}
+      #reduced-scene {display:inline}
+    }
+  </style>
+  <g id="animated-scene">
+    <!-- Title: separate glyphs allow precise, editable landing positions. -->
+    <g id="wordmark">
+      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 -110" begin="1.9s" dur="0.65s" fill="freeze" calcMode="spline" keySplines="0.22 1 0.36 1"/>
+      <text class="letter" x="245" y="280">H</text>
+      <text class="letter" x="303" y="280">A</text>
+      <text class="letter" x="358" y="280">T</text>
+      <text class="letter" x="433" y="280">P</text>
+      <text class="letter" x="485" y="280">r</text>
+      <text class="letter" x="518" y="280">e</text>
+      <text class="letter" x="563" y="280">d</text>
+      <!-- Dotless i plus a separate dot: the moving atom replaces this dot. -->
+      <text class="letter" x="611" y="280">ı
+        <animateTransform attributeName="transform" type="translate" values="0 0;0 24;0 -12;0 5;0 0" keyTimes="0;0.3;0.55;0.8;1" begin="1.7s" dur="0.65s" fill="freeze"/>
+      </text>
+      <circle cx="621" cy="222" r="5.5" fill="#25313C">
+        <animate attributeName="opacity" from="1" to="0" begin="1.35s" dur="0.2s" fill="freeze"/>
+      </circle>
+      <text class="letter" x="634" y="280">c</text>
+      <text class="letter" x="679" y="280">t</text>
+    </g>
+    <!-- Moving atom. Three equally spaced taps. Atom radius is 21; landing centers sit 21 units above letter tops. First two taps use cap height; final taps use lowercase height. -->
+    <g id="hydrogen" opacity="0">
+      <animate attributeName="opacity" from="0" to="1" begin="0.15s" dur="0.12s" fill="freeze"/>
+      <set attributeName="visibility" to="hidden" begin="2.55s" fill="freeze"/>
+      <animateMotion path="M 210 145 Q 245 120 273 204" begin="0.15s" dur="0.3s" fill="freeze"/>
+      <animateMotion path="M 273 204 Q 331 74 389 204 Q 447 92 505 222 Q 563 92 621 222" begin="0.45s" dur="1.2s" fill="freeze" calcMode="paced"/>
+      <animateMotion path="M 621 222 C 621 120 500 120 500 330" begin="1.9s" dur="0.65s" fill="freeze"/>
+      <!-- Final circle radius: edit 64. Final position is 500,280. -->
+      <circle class="button-outline" r="21" fill="#3569D4">
+        <animate attributeName="r" from="21" to="64" begin="1.9s" dur="0.65s" fill="freeze"/>
+      </circle>
+      <text text-anchor="middle" dominant-baseline="central" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="700" fill="white">H
+        <animate attributeName="opacity" to="0" begin="1.9s" dur="0.2s" fill="freeze"/>
+      </text>
+    </g>
+    <!-- Final controls: actual destinations must be connected by your app. -->
+    <g id="input-options" visibility="hidden">
+      <set attributeName="visibility" to="visible" begin="2.55s" fill="freeze"/>
+      <a class="choice" href="#smiles-input" data-mode="smiles" aria-label="SMILES: Paste a string">
+        <g transform="translate(500 330)">
+          <animateTransform attributeName="transform" type="translate" from="500 330" to="320 330" begin="2.55s" dur="0.5s" calcMode="spline" keySplines="0.22 1 0.36 1" fill="freeze"/>
+          <g class="hover-shape">
+            <circle r="64" fill="#168A92"/>
+            <text text-anchor="middle" y="7" font-family="Outfit,Arial,sans-serif" font-size="22" font-weight="700" fill="white" opacity="0">SMILES<animate attributeName="opacity" to="1" begin="2.85s" dur="0.2s" fill="freeze"/></text>
+          </g>
+          <text class="small" text-anchor="middle" y="98" opacity="0">Paste a string<animate attributeName="opacity" to="1" begin="2.95s" dur="0.2s" fill="freeze"/></text>
+        </g>
+      </a>
+      <a class="choice" href="#molecule-editor" data-mode="draw" aria-label="Draw: Build a structure">
+        <g transform="translate(500 330)">
+          <animateTransform attributeName="transform" type="translate" from="500 330" to="500 330" begin="2.55s" dur="0.5s" calcMode="spline" keySplines="0.22 1 0.36 1" fill="freeze"/>
+          <g class="hover-shape">
+            <circle r="64" fill="#3569D4"/>
+            <text text-anchor="middle" y="7" font-family="Outfit,Arial,sans-serif" font-size="22" font-weight="700" fill="white" opacity="0">Draw<animate attributeName="opacity" to="1" begin="2.85s" dur="0.2s" fill="freeze"/></text>
+          </g>
+          <text class="small" text-anchor="middle" y="98" opacity="0">Build a structure<animate attributeName="opacity" to="1" begin="2.95s" dur="0.2s" fill="freeze"/></text>
+        </g>
+      </a>
+      <a class="choice" href="#xyz-upload" data-mode="xyz" aria-label="XYZ: Upload a file">
+        <g transform="translate(500 330)">
+          <animateTransform attributeName="transform" type="translate" from="500 330" to="680 330" begin="2.55s" dur="0.5s" calcMode="spline" keySplines="0.22 1 0.36 1" fill="freeze"/>
+          <g class="hover-shape">
+            <circle r="64" fill="#D96858"/>
+            <text text-anchor="middle" y="7" font-family="Outfit,Arial,sans-serif" font-size="22" font-weight="700" fill="white" opacity="0">XYZ<animate attributeName="opacity" to="1" begin="2.85s" dur="0.2s" fill="freeze"/></text>
+          </g>
+          <text class="small" text-anchor="middle" y="98" opacity="0">Upload a file<animate attributeName="opacity" to="1" begin="2.95s" dur="0.2s" fill="freeze"/></text>
+        </g>
+      </a>
+    </g>
+    <text class="small" x="500" y="220" text-anchor="middle" opacity="0">Choose how to add your molecule<animate attributeName="opacity" to="1" begin="2.55s" dur="0.25s" fill="freeze"/></text>
+  </g>
+  <g id="reduced-scene" display="none">
+    <text class="letter" x="500" y="170" text-anchor="middle">HAT Predict</text>
+    <text class="small" x="500" y="220" text-anchor="middle">Choose how to add your molecule</text>
+<a class="choice" href="#smiles-input" data-mode="smiles" aria-label="SMILES: Paste a string"><g transform="translate(320 330)"><g class="hover-shape"><circle r="64" fill="#168A92"/><text y="7" text-anchor="middle" font-family="Outfit,Arial,sans-serif" font-size="22" font-weight="700" fill="white">SMILES</text></g><text class="small" y="98" text-anchor="middle">Paste a string</text></g></a>
+<a class="choice" href="#molecule-editor" data-mode="draw" aria-label="Draw: Build a structure"><g transform="translate(500 330)"><g class="hover-shape"><circle r="64" fill="#3569D4"/><text y="7" text-anchor="middle" font-family="Outfit,Arial,sans-serif" font-size="22" font-weight="700" fill="white">Draw</text></g><text class="small" y="98" text-anchor="middle">Build a structure</text></g></a>
+<a class="choice" href="#xyz-upload" data-mode="xyz" aria-label="XYZ: Upload a file"><g transform="translate(680 330)"><g class="hover-shape"><circle r="64" fill="#D96858"/><text y="7" text-anchor="middle" font-family="Outfit,Arial,sans-serif" font-size="22" font-weight="700" fill="white">XYZ</text></g><text class="small" y="98" text-anchor="middle">Upload a file</text></g></a>
+  </g>
+  <!-- Footer is always visible. Replace these fragment links with app panels/pages. -->
+  <g id="footer" font-family="Outfit,Arial,Helvetica,sans-serif" font-size="16" text-anchor="middle">
+    <line x1="365" y1="518" x2="635" y2="518" stroke="#E5E7EB" stroke-width="1"/>
+    <a class="footer-link" href="#about" data-dialog="about" aria-label="About HAT Predict"><text x="397" y="557">About</text></a>
+    <circle cx="445" cy="551" r="1.5" fill="#CBD5E1"/>
+    <a class="footer-link" href="#credits" data-dialog="credits" aria-label="Credits and citation"><text x="500" y="557">Credits</text></a>
+    <circle cx="555" cy="551" r="1.5" fill="#CBD5E1"/>
+    <a class="footer-link" href="#licenses" data-dialog="licenses" aria-label="Licenses"><text x="609" y="557">Licenses</text></a>
+  </g>
+</svg>
+<div class="intro-controls"><button class="text-button" id="skip-animation">Skip animation</button><button class="text-button" id="replay">Replay animation</button></div>
+</section>
+<section id="workspace" class="screen" hidden>
+<button class="text-button back">← Input methods</button><div class="section-title"><div><p class="eyebrow">BUILD YOUR REACTION</p><h2 id="mode-title">Enter your structures.</h2></div><button class="secondary" id="load-example">Load example</button></div>
+<p class="notice">Demo mode · This website does not run the model. The example below contains a saved, real prediction.</p>
+<div id="xyz-pane" hidden>
+<p class="help">Upload separate reactant structures, not a combined transition-state file. Files stay on your device. Coordinate previews do not infer bonds or validate chemical identity.</p>
+<div class="inputs xyz-inputs">
+<article class="panel"><div class="panel-title"><span class="pill blue">A•</span><h3>Abstracting radical</h3></div><p class="help">One XYZ file containing the abstracting radical.</p><label class="upload" for="xyz-a"><span id="xyz-a-choose">Choose an .xyz file</span><input id="xyz-a" type="file" accept=".xyz"></label><p id="xyz-a-status" role="status" class="help"></p><canvas id="xyz-a-preview" width="440" height="260" hidden aria-label="Abstracting radical atom-coordinate preview"></canvas><button id="xyz-a-remove" class="text-button" hidden>Remove file</button><div id="xyz-a-details" hidden><label for="xyz-a-charge">Total charge</label><input id="xyz-a-charge" type="number" step="1" value="0"><label for="xyz-a-site">Radical atom (XYZ row number)</label><input id="xyz-a-site" type="number" min="1" step="1" placeholder="Select atom number"><p class="help">Selections are saved locally for this session. Bonding and chemical validation are not implemented.</p></div></article><article class="panel"><div class="panel-title"><span class="pill green">B–H</span><h3>Hydrogen donor</h3></div><p class="help">One XYZ file containing the hydrogen donor.</p><label class="upload" for="xyz-b"><span id="xyz-b-choose">Choose an .xyz file</span><input id="xyz-b" type="file" accept=".xyz"></label><p id="xyz-b-status" role="status" class="help"></p><canvas id="xyz-b-preview" width="440" height="260" hidden aria-label="Hydrogen donor atom-coordinate preview"></canvas><button id="xyz-b-remove" class="text-button" hidden>Remove file</button><div id="xyz-b-details" hidden><label for="xyz-b-charge">Total charge</label><input id="xyz-b-charge" type="number" step="1" value="0"><label for="xyz-b-site">Hydrogen-transfer sites</label><select id="xyz-b-site"><option value="all">All supported sites (planned)</option><option value="selected">A selected site (planned)</option></select><label for="xyz-b-atom">Selected donor atom (if applicable)</label><input id="xyz-b-atom" type="number" min="1" step="1" placeholder="Donor atom number" disabled><p class="help">Selections are saved locally for this session. Bonding and chemical validation are not implemented.</p></div></article></div><p class="notice">XYZ predictions are not connected yet. Confirming coordinates and charge alone does not establish bonds or radical identity.</p></div>
+<div id="reaction-pane"><div class="inputs"><article class="panel"><div class="panel-title"><span class="pill blue">A•</span><h3>Abstracting radical</h3></div><p class="help">For the current input convention, place one negative charge where the radical belongs.</p><div class="editor-wrap" hidden><iframe id="editor-a" title="Draw abstracting radical in Ketcher" src="about:blank"></iframe></div><div class="smiles-entry"><label for="smiles-a">SMILES</label><textarea id="smiles-a" spellcheck="false" placeholder="e.g. CC(C)([O-])c1ccccc1"></textarea></div></article><article class="panel"><div class="panel-title"><span class="pill green">B–H</span><h3>Hydrogen donor</h3></div><p class="help">Enter a neutral, closed-shell molecule that can donate a hydrogen atom.</p><div class="editor-wrap" hidden><iframe id="editor-b" title="Draw hydrogen donor in Ketcher" src="about:blank"></iframe></div><div class="smiles-entry"><label for="smiles-b">SMILES</label><textarea id="smiles-b" spellcheck="false" placeholder="e.g. CCCC(C)C"></textarea></div></article></div><p id="editor-status" class="help" role="status"></p><div class="submit-row"><p>Live predictions will be connected later.</p><button id="submit" class="primary">View example result →</button></div></div>
+<p id="message" role="status" class="feedback"></p>
+<article id="results" class="result panel" hidden><div><p class="eyebrow">SAVED EXAMPLE · ONE REACTION SITE</p><h2>17.62 <span>kcal/mol</span></h2><p>Predicted activation free energy, ΔG‡</p></div><div class="result-detail"><h3>Example reaction</h3><p>Cumyloxyl radical + 2-methylpentane</p><p class="help">Shown site: terminal carbon radical <code>[CH2]CCC(C)C</code>.</p><p class="help">This is one site from your local benchmark. Product selectivity and other sites are not included.</p><button class="secondary" id="download">Download example CSV</button></div></article>
+</section>
+</main>
+<footer><span>Made for exploring chemistry.</span><nav aria-label="Information"><button data-dialog="about">About</button><button data-dialog="credits">Credits</button><button data-dialog="licenses">Licenses</button></nav></footer>
+<dialog id="info"><button id="close-dialog" class="close" aria-label="Close information">×</button><div id="dialog-content"></div></dialog>
+<script src="js/animation.js"></script><script src="js/app.js"></script>
+</body></html>
