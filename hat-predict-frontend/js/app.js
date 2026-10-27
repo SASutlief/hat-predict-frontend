@@ -4,9 +4,20 @@
   const sample = {a:'CC(C)([O-])c1ccccc1',b:'CCCC(C)C'};
   let mode='smiles', ready=false, loading=false;
   let exampleExport = null;
+  let shownProducts = [];
+  let exampleResultsPromise;
+  async function getExampleResults(){
+    if(!exampleResultsPromise){
+      exampleResultsPromise=fetch('data/example-results.json').then(response=>{
+        if(!response.ok)throw new Error('Example results could not be loaded.');
+        return response.json();
+      }).catch(error=>{exampleResultsPromise=null;throw error;});
+    }
+    return exampleResultsPromise;
+  }
   const editors=['#editor-a','#editor-b'];
   const info = {
-    about:'<h2>About HAT Predict</h2><p>A frontend prototype for a tool that estimates hydrogen atom transfer activation barriers.</p><p>Drawing and text inputs are interactive. No live predictions are calculated here. The saved one-site example comes from the local HAT Predict benchmark.</p><p>Scientific scope and validation information will be added with the backend.</p>',
+    about:'<h2>About HAT Predict</h2><p>A frontend prototype for a tool that estimates hydrogen atom transfer activation barriers.</p><p>Drawing and text inputs are interactive. No live predictions are calculated here. The example shows five saved regioselective HAT radical products and their activation barriers from the original repository.</p><p>Scientific scope and validation information will be added with the backend.</p>',
     credits:'<h2>Credits</h2><p>HAT Predict model and original application: <a href="https://github.com/jacosand/hat-predict" target="_blank" rel="noopener">original repository</a>.</p><p>Structure editor: <a href="https://github.com/epam/ketcher" target="_blank" rel="noopener">EPAM Ketcher</a>.</p><p>Prototype frontend prepared for the Ken Houk Lab.</p><h3>HAT Predict authors</h3><p>Jacob N. Sanders<sup>1</sup>, Qingyang Zhou<sup>1</sup>, Qiankun Mo<sup>1</sup>, Fengjiao Liu<sup>2</sup>, Runze Liu<sup>1</sup>, Panpan Chen<sup>1</sup>, Meng Duan<sup>1</sup>, Xin Hong<sup>3</sup>, and K. N. Houk<sup>1</sup></p><h3>Affiliations</h3><p><sup>1</sup> Department of Chemistry and Biochemistry, University of California, Los Angeles, CA 90095, United States</p><p><sup>2</sup> School of Chemistry and Chemical Engineering, Shanghai University of Engineering Science, Shanghai 201620, China</p><p><sup>3</sup> Center of Chemistry for Frontier Technologies, Department of Chemistry, State Key Laboratory of Clean Energy Utilization, Zhejiang University, Hangzhou 310027, China</p>',
     licenses:'<h2>Licenses &amp; notices</h2><h3>Ketcher 3.18.0</h3><p>Copyright 2021 EPAM Systems. Ketcher is distributed under the Apache License, Version 2.0.</p><p><a href="KETCHER_LICENSE.txt" target="_blank" rel="noopener">Read the included Apache 2.0 license</a> · <a href="https://github.com/epam/ketcher" target="_blank" rel="noopener">Ketcher source</a></p><h3>Third-party dependencies</h3><p>The bundled editor includes software from other projects. Their copyright and license notices are retained with the distributed files.</p><p><a href="ketcher/static/js/main.e47c48ad.js.LICENSE.txt" target="_blank" rel="noopener">Main editor notices</a> · <a href="THIRD_PARTY.md" target="_blank" rel="noopener">All bundled notice files</a></p><h3>HAT Predict</h3><p>This frontend prototype does not distribute the HAT Predict model or Python backend. Attribution appears in Credits; third-party component licenses do not grant a license to the model or the entire website.</p>'
   };
@@ -46,7 +57,7 @@
     finally{loading=false;}
   }
   async function loadExample(){
-    $('#smiles-a').value=sample.a;$('#smiles-b').value=sample.b;$('#message').textContent='Example loaded. Select “View example result” to see its saved prediction.';
+    $('#smiles-a').value=sample.a;$('#smiles-b').value=sample.b;$('#message').textContent='Example loaded. Select “Show example products” to see its ranked saved predictions.';
     if(mode==='draw'){
       await loadEditors();
       if(ready){
@@ -69,16 +80,20 @@
     const originalExample = a===sample.a && b===sample.b;
     const editorExample = exampleExport && a===exampleExport[0].trim() && b===exampleExport[1].trim();
     if(!originalExample && !editorExample){$('#message').textContent='Your structures have been entered. This prototype cannot calculate new predictions. Load the example to view a saved result.';return;}
-    $('#message').textContent='Displaying the saved benchmark result. No model calculation was run.';
+    const dataset=await getExampleResults();
+    shownProducts=HATResults.render(document,dataset);
+    $('#download').disabled=false;
+    $('#message').textContent='Showing five saved reference products, ranked by predicted ΔG‡. No new calculation was run.';
     $('#results').hidden=false;$('#results').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
   }
   $('#submit').addEventListener('click',async()=>{
     $('#submit').disabled=true;
-    try{await submitPrediction();}catch(error){$('#message').textContent='Could not export the drawing. Try entering SMILES directly.';}finally{$('#submit').disabled=false;}
+    try{await submitPrediction();}catch(error){$('#message').textContent='Could not display the results. Check that the drawing exports and the example data files are present.';}finally{$('#submit').disabled=false;}
   });
   $('#download').addEventListener('click',()=>{
-    const csv='AR_smiles,AH_smiles,BR_smiles,BH_smiles,DGdd_pred\n"CC(C)([O])c1ccccc1","CC(C)(O)c1ccccc1","[CH2]CCC(C)C","CCCC(C)C",17.62\n';
-    const url=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));const a=document.createElement('a');a.href=url;a.download='hat-predict-saved-example.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    if(!shownProducts.length)return;
+    const csv=HATResults.toCSV(shownProducts);
+    const url=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));const a=document.createElement('a');a.href=url;a.download='hat-predict-ranked-products.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
   });
   // Basic XYZ parsing and atom-only 2D projection; no bonding is inferred.
   const xyzFiles = {a:null,b:null};

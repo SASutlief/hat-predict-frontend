@@ -1,6 +1,6 @@
 # HAT Predict frontend starter
 
-A standalone HTML/CSS/JavaScript prototype. No Python chemistry, Django, backend server, API key or payment setup is required. Ketcher is bundled when the ketcher/ directory is present. Saved example data is explicitly labeled and comes from the supplied local one-site prediction (17.62 kcal/mol); arbitrary inputs do not produce new predictions.
+A standalone HTML/CSS/JavaScript prototype. No Python chemistry, Django, backend server, API key or payment setup is required. Ketcher is bundled when the ketcher/ directory is present. Saved example data is explicitly labeled and contains five radical products from the original repository model/inference/barriers.csv; arbitrary inputs do not produce new predictions.
 
 ## 1. Open it locally on your Windows/Ubuntu laptop
 
@@ -21,14 +21,14 @@ If you instead extract the ZIP inside Ubuntu, use that actual folder path. You d
 ## 2. Things to try
 
 1. Watch the hydrogen tap above the letters and float up. The original SVG choreography is embedded intact: its title movement, spring, dot growth, and splitting circles retain their original timing and paths. Replay or skip it.
-2. Click SMILES, then Load example, then View example result. Confirm 17.62 and the saved-example label.
+2. Click SMILES, then Load example, then Show example products. Confirm five structures sorted by ΔG‡: 14.23, 16.09, 16.80, 17.35, 17.69 kcal/mol, and the saved-reference label. Download the ranked CSV.
 3. Change a SMILES input. Confirm it does not assign the example prediction to a new structure.
 4. Return to the opening screen, click Draw it, and wait for both Ketcher editors to load. Load example, modify a drawing, and export by pressing the result button. The drawing mode hides text fields and exports structures behind the scenes. Choose SMILES separately to type inputs.
 5. Open About, Credits and Licenses. Escape closes the dialog.
 6. Explore .xyz. Upload separate A• and B–H files. Each panel shows the filename, atom count and a numbered XY atom-coordinate preview; Replace/Remove controls are independent. Charge and site fields are draft inputs only. Nothing is uploaded; no bonds are inferred and no prediction is calculated.
 7. Narrow the browser window. Panels stack on a small screen. Use Tab to navigate buttons and inputs.
 
-Use F12 > Console if a button does not work. F12 > Network reveals missing files (404). Hard refresh with Ctrl+Shift+R after edits. Verification performed during preparation: JavaScript syntax and local asset checks; no real browser execution was available here. Test Ketcher and layouts yourself before presenting.
+Use F12 > Console if a button does not work. F12 > Network reveals missing files (404). Hard refresh with Ctrl+Shift+R after edits. Results update verified in a browser: five product drawings, ascending barriers and visible source labels. Ranking, CSV ordering and invalid-result checks also pass. Test both Ketcher editors and your deployed page before presenting.
 
 ## 3. Put it on GitHub using GitHub Desktop (recommended)
 
@@ -70,7 +70,10 @@ Open the repository folder with a code editor such as VS Code:
 | js/animation.js | Replay and Skip controls for the original SVG |
 | index.html, embedded SVG | Original animation paths and timing |
 | assets/original-intro.svg | Unmodified original artwork for reference |
-| js/app.js | Navigation, Ketcher integration, example result, dialogs |
+| js/app.js | Navigation, Ketcher integration, example results, dialogs |
+| js/results.js | Validation, ranking, product rendering and CSV export |
+| data/example-results.json | Five saved reference predictions and their source |
+| assets/products/ | Radical product structure drawings |
 | ketcher/ | Third-party editor bundle; normally leave unchanged |
 | THIRD_PARTY.md | Attribution and license notes |
 
@@ -82,7 +85,7 @@ The submitPrediction() function in js/app.js is the connection point. Replace th
 
 ## Scope
 
-This starter intentionally shows only one saved reaction site. It does not claim full product selectivity, model scope, or accuracy for new molecules. Confirm paper attribution and final scientific text with your post-doc. The Ketcher negative-charge convention follows your existing Django UI, not a chemical claim that anions and radicals are interchangeable. No account system or daily quotas are implemented.
+This prototype shows five saved regioselective radical products for the example reaction. ΔG‡ means activation free energy, not product free energy. These original reference values are separate from the later 17.62 one-site benchmark. New molecules need a connected backend; the frontend does not enumerate or predict products for them. It does not claim full product selectivity, model scope, or accuracy for new molecules. Confirm paper attribution and final scientific text with your post-doc. The Ketcher negative-charge convention follows your existing Django UI, not a chemical claim that anions and radicals are interchangeable. No account system or daily quotas are implemented.
 
 Documentation checked:
 - https://docs.github.com/en/pages/quickstart

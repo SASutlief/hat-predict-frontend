@@ -1,0 +1,44 @@
+{
+  "title": "Cumyloxyl radical + 2-methylpentane",
+  "status": "saved_example",
+  "source": "Original repository model/inference/barriers.csv",
+  "source_url": "https://github.com/jacosand/hat-predict/blob/main/model/inference/barriers.csv",
+  "description": "Saved reference predictions supplied with the original repository. Not recalculated, not results from the retrained model, and not the later 17.62 one-site benchmark.",
+  "products": [
+    {
+      "id": "P1",
+      "smiles": "[CH2]CCC(C)C",
+      "donor_atom": 1,
+      "delta_g_dagger_kcal_mol": 17.35,
+      "image": "assets/products/example-p1.svg"
+    },
+    {
+      "id": "P2",
+      "smiles": "C[CH]CC(C)C",
+      "donor_atom": 2,
+      "delta_g_dagger_kcal_mol": 16.09,
+      "image": "assets/products/example-p2.svg"
+    },
+    {
+      "id": "P3",
+      "smiles": "CC[CH]C(C)C",
+      "donor_atom": 3,
+      "delta_g_dagger_kcal_mol": 16.8,
+      "image": "assets/products/example-p3.svg"
+    },
+    {
+      "id": "P4",
+      "smiles": "CCC[C](C)C",
+      "donor_atom": 4,
+      "delta_g_dagger_kcal_mol": 14.23,
+      "image": "assets/products/example-p4.svg"
+    },
+    {
+      "id": "P5",
+      "smiles": "[CH2]C(C)CCC",
+      "donor_atom": 5,
+      "delta_g_dagger_kcal_mol": 17.69,
+      "image": "assets/products/example-p5.svg"
+    }
+  ]
+}
